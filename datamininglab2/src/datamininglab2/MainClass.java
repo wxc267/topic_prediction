@@ -50,6 +50,8 @@ public class MainClass {
 			List<ReuterDoc> reuters=FileParser.parse(fileName);
 			reuterList.addAll(reuters);
 		}
+		WordCounter word=new WordCounter(reuterList);
+		
 		printResult(reuterList);	
 	}
 }

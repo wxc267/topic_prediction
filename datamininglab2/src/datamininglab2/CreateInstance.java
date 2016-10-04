@@ -25,7 +25,7 @@ public class CreateInstance {
 	 *  the mode of data set, train/test
 	 * @return
 	 */
-	public static Instances GetDataset(List<Map<String,Double>> tfidf, List<String> wordList,List<String> actualTopic,List<String> topicSet,String mode)
+	public static Instances GetDataset(List<Map<String,Double>> tfidf, List<String> wordList,List<List<String>> actualTopic,List<String> topicSet,String mode)
 	{
 		//add the attributes to the weka
 		Attribute topic_attr=new Attribute("topic_attr",topicSet);
@@ -42,7 +42,9 @@ public class CreateInstance {
 		//add data instances into the dataset
 		for(int i=0;i<tfidf.size();i++){
 			Instance instance=new DenseInstance(wordList.size()+1);
+			List<String> topics=actualTopic.get(i);
 			Map<String,Double> values=tfidf.get(i);
+			
 			for(int j=0;j<wordList.size();j++)
 			{
 				//set the attribute value
@@ -59,13 +61,19 @@ public class CreateInstance {
 			}
 			if(mode.equals("train"))
 			{	
-				instance.setValue(topic_attr,actualTopic.get(i));
+				for(int k=0;k<topics.size();k++)
+				{
+					Instance copyInstance=new DenseInstance(instance);
+					copyInstance.setValue(topic_attr,topics.get(k));
+					dataSet.add(copyInstance);
+				}
 			}
 			else if(mode.equals("test"))
 			{
 				instance.setValue(topic_attr, "?");
+				dataSet.add(instance);
 			}
-			dataSet.add(instance);
+			
 		}
 		return dataSet;
 	}
