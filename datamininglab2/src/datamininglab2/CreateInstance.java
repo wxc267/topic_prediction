@@ -21,11 +21,9 @@ public class CreateInstance {
 	 * the topic of this document
 	 * @param topicSet
 	 * the total topic set for this article
-	 * @param mode
-	 *  the mode of data set, train/test
 	 * @return
 	 */
-	public static Instances GetDataset(List<Map<String,Double>> tfidf, List<String> wordList,List<List<String>> actualTopic,List<String> topicSet,String mode)
+	public static Instances GetDataset(List<Map<String,Double>> tfidf, List<String> wordList,List<List<String>> actualTopic,List<String> topicSet,int split)
 	{
 		//add the attributes to the weka
 		Attribute topic_attr=new Attribute("topic_attr",topicSet);
@@ -40,7 +38,7 @@ public class CreateInstance {
 		
 		dataSet.setClassIndex(dataSet.numAttributes()-1);
 		//add data instances into the dataset
-		for(int i=0;i<tfidf.size();i++){
+		for(int i=0;i<split;i++){
 			Instance instance=new DenseInstance(wordList.size()+1);
 			List<String> topics=actualTopic.get(i);
 			Map<String,Double> values=tfidf.get(i);
@@ -50,31 +48,48 @@ public class CreateInstance {
 				//set the attribute value
 				instance.setDataset(dataSet);
 				String word=wordList.get(j);
+				Attribute word_attr=instance.attribute(j);
 				if(values.containsKey(word))
 				{
-					instance.setValue(new Attribute(wordList.get(j)), values.get(word));
+					
+					instance.setValue(word_attr, values.get(word));
 				}
 				else
 				{
-					instance.setValue(new Attribute(wordList.get(j)),0);
+					instance.setValue(word_attr,0);
 				}
 			}
-			if(mode.equals("train"))
-			{	
+			
 				for(int k=0;k<topics.size();k++)
 				{
 					Instance copyInstance=new DenseInstance(instance);
 					copyInstance.setValue(topic_attr,topics.get(k));
 					dataSet.add(copyInstance);
 				}
-			}
-			else if(mode.equals("test"))
-			{
-				instance.setValue(topic_attr, "?");
-				dataSet.add(instance);
-			}
+			
 			
 		}
 		return dataSet;
+	}
+
+
+	public static Instance CreateTestData(Map<String,Double> tfidfMap, List<String> wordList,Instances dataSet)
+	{
+		Instance instance=new DenseInstance(wordList.size()+1);
+		instance.setDataset(dataSet);
+		for(int i=0;i<wordList.size();i++)
+		{
+			String word=wordList.get(i);
+			Attribute word_attr=instance.attribute(i);
+			if(tfidfMap.containsKey(word))
+			{
+				instance.setValue(word_attr, tfidfMap.get(word));
+			}
+			else
+			{
+				instance.setValue(word_attr,0);
+			}
+		}
+		return instance;
 	}
 }

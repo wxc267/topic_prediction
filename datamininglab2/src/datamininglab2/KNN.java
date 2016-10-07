@@ -11,44 +11,23 @@ import weka.core.Instances;
 
 public class KNN {
 		Classifier ibk;
-		Evaluation eval;
 		public KNN()
 		{
-			ibk=new IBk();
+			ibk=new IBk(5);//k is 5.
 		}
 		
 		public void BuildClassifier(Instances trainData) throws Exception
 		{
+			long start=System.currentTimeMillis();
 			ibk.buildClassifier(trainData);
-			eval=new Evaluation(trainData);
+			long end=System.currentTimeMillis();
+			double timeSpan=(end-start)/1000.0;
+			System.out.println("Time for construct classifier for KNN(Offline cost):" +timeSpan+" s.");
 		}
-		public List<double[]> getClassDistances(Instances testData) throws Exception
+		public double[] ClassifyInstance(Instance testData) throws Exception
 		{
-			List<double[]> result=new ArrayList<double[]>();
-			eval.evaluateModel(ibk, testData);
-			for(int i=0;i<testData.size();i++)
-			{
-				Instance test=testData.get(i);
-				double[] value=ibk.distributionForInstance(test);
-				result.add(value);
-			}
-			return result;
+				return ibk.distributionForInstance(testData);
 		}
-		public List<String> predictClassLabel(double[] possibility,List<String> topicSet)
-		{
-			List<String> result=new ArrayList<String>();
-			for(int i=0;i<possibility.length;i++)
-			{
-				if(possibility[i]>0.9)
-				{
-					result.add(topicSet.get(i));
-				}
-			}
-			return result;
-			
-		}
-		public double[][] getConfusionMatrix()
-		{
-			return eval.confusionMatrix();
-		}
+
+
 }

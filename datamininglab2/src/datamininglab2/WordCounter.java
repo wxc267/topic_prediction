@@ -10,7 +10,8 @@ import java.util.Map;
 import java.util.Set;
 
 public class WordCounter {
-	private static int MIN_FREQ=2000;
+	private static int MIN_FREQ=500;
+	private static int MAX_FREQ=5000;
 	private Set<String> wordsSet;
 	private List<ReuterDoc> reuterList;
 	private Map<String,Integer> docFreq;
@@ -109,7 +110,8 @@ public class WordCounter {
 	        for(int i=0;i<list.size()-1;i++)
 	        {
 	        	Map.Entry<String, Double> entry=list.get(i);
-	        	if(docFreq.get(entry.getKey())>MIN_FREQ){
+	        	if(docFreq.get(entry.getKey())>MIN_FREQ&&docFreq.get(entry.getKey())<MAX_FREQ)
+				{
 	        		result.put(entry.getKey(), entry.getValue());
 	        		wordsSet.add(entry.getKey());
 	        	}
