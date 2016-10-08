@@ -7,10 +7,21 @@ public class UtilClass {
 	public static List<String> predictClassLabel(double[] distances,List<String> topicSet)
 	{
 			List<String> topic=new ArrayList<String>();
-			for(int j=0;j<distances.length;j++){
-				if(distances[j]>0.3)
+			double max=0;
+			int index=0;
+			for(int i=0;i<distances.length;i++){
+				if(distances[i]>max)
 				{
-					topic.add(topicSet.get(j));
+					max=distances[i];
+					index=i;
+				}
+			}
+			topic.add(topicSet.get(index));
+			for(int i=0;i<distances.length;i++)
+			{
+				if(max/distances[i]<=1.5&&i!=index)
+				{
+					topic.add(topicSet.get(i));
 				}
 			}
 			return topic;

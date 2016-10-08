@@ -116,6 +116,7 @@ public class MainClass {
 	}
 	public static void main(String[] args) throws Exception
 	{
+		System.out.println("Split percent:"+splitPercent+"/"+(100-splitPercent));
 		//parse the data file
 		List<ReuterDoc> reuterList=new ArrayList<ReuterDoc>();
 		for(int i=0;i<22;i++){
